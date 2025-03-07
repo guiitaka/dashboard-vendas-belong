@@ -1,0 +1,29 @@
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Ambiente virtual Python
+venv/
+.env
+.venv
+env/
+ENV/
+
+# Arquivos de cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+*~
+
+# Arquivos de dados grandes (se necessário)
+*.csv
+*.xlsx
+*.xls
