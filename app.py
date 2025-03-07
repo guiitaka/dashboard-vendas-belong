@@ -11,11 +11,6 @@ import json
 from urllib.parse import quote
 import base64
 from io import BytesIO
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.lib import colors
 import matplotlib.pyplot as plt
 from PIL import Image as PILImage
 import tempfile
@@ -432,28 +427,22 @@ elif uploaded_file is not None:
         df = load_data(uploaded_file)
         df_processed = process_data(df)
     
-    # Adicione o botão de exportação PDF
-    if st.sidebar.button("📥 Exportar Relatório PDF", type="primary"):
+    # Adicione o botão de exportação CSV
+    if st.sidebar.button("📥 Exportar Relatório", type="primary"):
         try:
-            with st.spinner("Gerando relatório PDF..."):
-                # Gerar o PDF
-                pdf_buffer = create_pdf_report(df)
-                
-                # Criar link de download
-                st.sidebar.markdown(get_pdf_download_link(pdf_buffer), unsafe_allow_html=True)
-                st.sidebar.success("Relatório PDF gerado com sucesso!")
-        except Exception as e:
-            st.sidebar.error(f"Erro ao gerar relatório: {str(e)}")
-            st.sidebar.info("Tente exportar como CSV como alternativa.")
-            
-            # Oferecer alternativa CSV em caso de erro
-            if st.sidebar.button("📥 Exportar como CSV"):
+            with st.spinner("Gerando relatório CSV..."):
+                # Gerar CSV
                 csv_buffer = BytesIO()
                 df.to_csv(csv_buffer, index=False)
                 csv_buffer.seek(0)
+                
+                # Criar link de download
                 b64 = base64.b64encode(csv_buffer.read()).decode()
                 href = f'<a href="data:file/csv;base64,{b64}" download="relatorio_vendas.csv" class="download-button">📥 Baixar Dados CSV</a>'
                 st.sidebar.markdown(href, unsafe_allow_html=True)
+                st.sidebar.success("Relatório CSV gerado com sucesso!")
+        except Exception as e:
+            st.sidebar.error(f"Erro ao gerar relatório: {str(e)}")
     
     # Exibir informações sobre a categorização automática
     if 'descricao' in df.columns:
