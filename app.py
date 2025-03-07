@@ -57,6 +57,9 @@ st.markdown("---")
 st.sidebar.header("Upload de Dados")
 uploaded_file = st.sidebar.file_uploader("Faça upload da planilha de vendas", type=["xlsx", "csv"])
 
+# Adicione esta opção para usar dados de exemplo
+use_example_data = st.sidebar.checkbox("Usar dados de exemplo", False)
+
 # Função para carregar os dados
 @st.cache_data
 def load_data(file):
@@ -402,7 +405,28 @@ def create_pdf_report(df):
     return buffer
 
 # Adicione o botão de exportação CSV no sidebar
-if uploaded_file is not None:
+if use_example_data:
+    # Carregar dados de exemplo
+    @st.cache_data
+    def load_example_data():
+        # Criar um DataFrame de exemplo ou carregar de um arquivo incluído no repositório
+        df_example = pd.DataFrame({
+            'numero_pedido': range(1000, 1100),
+            'data_venda': pd.date_range(start='2023-01-01', periods=100),
+            'quantidade': np.random.randint(1, 10, size=100),
+            'valor_total': np.random.uniform(50, 500, size=100),
+            'categoria': np.random.choice(['Maquiagem', 'Cabelos', 'Skincare', 'Perfumaria', 'Corpo'], size=100),
+            'descricao': ['Produto ' + str(i) for i in range(100)]
+        })
+        return df_example
+    
+    df = load_example_data()
+    df_processed = process_data(df)
+    
+    # Mostrar mensagem informativa
+    st.sidebar.success("Usando dados de exemplo. Faça upload de seus próprios dados para análise personalizada.")
+    
+elif uploaded_file is not None:
     # Carregar e processar os dados
     with st.spinner('Carregando e processando dados...'):
         df = load_data(uploaded_file)
@@ -849,7 +873,7 @@ if uploaded_file is not None:
 
 else:
     # Exibir instruções quando nenhum arquivo for carregado
-    st.info("👆 Faça o upload de uma planilha para visualizar o dashboard.")
+    st.info("👆 Faça o upload de uma planilha para visualizar o dashboard ou use os dados de exemplo.")
     
     st.markdown("""
     ### Formato esperado da planilha:
